@@ -66,19 +66,20 @@ public class AdaptiveAStar extends Maze {
 		
 	}
 	
-	public void main(String[] args) throws IOException {
-		Maze m;
+	public static void main(String[] args) throws IOException {
+		//Maze m;
 		boolean path;
+		AdaptiveAStar newSearch;
 
-		m = new Maze(101, 101, 0, 0, 100, 100);
-		path = adaptive(0, 0);
+		newSearch = new AdaptiveAStar(101, 101, 0, 0, 100, 100);
+		path = newSearch.adaptive(0, 0);
 			
 		if(path) {
-			m.clear_path();
-			adaptive(40, 35);	
+			newSearch.clear_path();
+			newSearch.adaptive(40, 35);	
 		}
 		
-		String buffer = m.output_maze();
+		String buffer = newSearch.output_maze();
 		BufferedWriter file = new BufferedWriter(new FileWriter(new File("adaptive.txt")));
 		file.write(buffer.toString());
 		file.flush();
