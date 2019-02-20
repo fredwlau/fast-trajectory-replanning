@@ -72,8 +72,8 @@ public class Maze {
 	
 	//helper functions
 	public void calc_heuristic() {
-		for(int i = 0; i<= max_row; i++) {
-			for(int j = 0; j<= max_col; j++) {
+		for(int i = 0; i < max_row; i++) {
+			for(int j = 0; j< max_col; j++) {
 				this.maze[i][j].
 				h_val = Math.abs(end.row - i) +
 						Math.abs(end.col - j);
@@ -84,8 +84,8 @@ public class Maze {
 	public String output_maze() {
 		final StringBuffer b = new StringBuffer();
 		b.append("\n");
-		for(int i = 0; i <= max_row; i++) {
-			for (int j = 0; j <= max_col; j++) {
+		for(int i = 0; i < max_row; i++) {
+			for (int j = 0; j < max_col; j++) {
 				if(this.maze[i][j].is_blocked) {
 					b.append(block_char);
 				}
@@ -103,8 +103,8 @@ public class Maze {
 	
 	public void create_maze() {
 		int h_val = 0;
-		for(int i = 0; i<= max_row; i++) {
-			for(int j = 0; j<= max_col; j++) {
+		for(int i = 0; i < max_row; i++) {
+			for(int j = 0; j< max_col; j++) {
 				this.maze[i][j] = new Node(i, j, h_val, block());
 			}
 		}
@@ -118,7 +118,12 @@ public class Maze {
 	}
 	
 	public static void main (String [] args) throws IOException {
-		//init maze and test output before proceeding
+		Maze m = new Maze(101, 101, 0, 0, 100, 100);
+		String buffer = m.output_maze();
+		BufferedWriter file = new BufferedWriter(new FileWriter(new File("output.txt")));
+		file.write(buffer.toString());
+		file.flush();
+		file.close();
 	}
 	
 }
