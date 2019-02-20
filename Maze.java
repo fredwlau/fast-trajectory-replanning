@@ -83,21 +83,27 @@ public class Maze {
 	
 	public String output_maze() {
 		final StringBuffer b = new StringBuffer();
-		b.append("\n");
+		for(int i = 0; i < max_col + 2; i++) {
+			b.append(block_char);
+		}
+		b.append('\n');
 		for(int i = 0; i < max_row; i++) {
+			b.append(block_char);
 			for (int j = 0; j < max_col; j++) {
 				if(this.maze[i][j].is_blocked) {
 					b.append(block_char);
 				}
-				else if(this.maze[i][j].path) {
+				else {
 					b.append(path_char);
 				}
-				else {
-					b.append("_");
-				}
 			}
+			b.append(block_char);
 			b.append("\n");
 		}
+		for(int i = 0; i < max_col + 2; i++) {
+			b.append(block_char);
+		}
+		b.append('\n');
 		return b.toString();
 	}
 	
