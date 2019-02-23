@@ -81,6 +81,26 @@ public class Maze {
 		}
 	}
 	
+	public void adaptiveAStar(){
+		//Previously called A* and saved list of nodes that have been expanded into opened_list
+
+		ArrayList<Node> adaptedList = opened_list;
+
+		for(int i=0;i<adaptedList.size();i++){
+	
+			//recalculate the heuristics for the nodes in the list of expanded nodes
+			//the new heuristic will be (the distance from the start state to the goal) - (distance from start state to s)
+
+			int newH = Math.abs(end.row - start.row) + Math.abs(end.col - start.row);	//distance of start state to goal
+			newH -= Math.abs(start.row-adaptedList.get(i).row) + Math.abs(start.col-adaptedList.get(i).col); //minus distance of start state to s
+			
+			expandedNodes.get(i).h_val = newH;
+		}
+
+		//We now run an A* search on this adapted list
+		//INSERT CODE HERE -- still working on this
+	}
+
 	public String output_maze() {
 		final StringBuffer b = new StringBuffer();
 		for(int i = 0; i < max_col + 2; i++) {
