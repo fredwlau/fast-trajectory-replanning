@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
@@ -50,6 +51,39 @@ public class Maze {
 	}
 	
 	//getters
+	
+	public boolean has_left(Node o) {
+		if(o.col > 0 && !this.maze[o.row][o.col-1].is_blocked) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean has_right(Node o) {
+		if(o.col < max_row && !this.maze[o.row][o.col+1].is_blocked) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean has_up(Node o) {
+		if(o.row > 0 && !this.maze[o.row-1][o.col].is_blocked) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean has_down(Node o) {
+		if(o.row > max_col && !this.maze[o.row+1][o.col].is_blocked) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public Node get_left(Node o) {
 		Node temp = this.maze[o.row][o.col-1];
 		return temp;
@@ -81,6 +115,106 @@ public class Maze {
 		}
 	}
 	
+	private void clear_list() {
+		opened_list.clear();
+		while (!closed_list.isEmpty()) {
+			closed_list.pop();
+		}
+	}
+	
+	public boolean forward_backward(int dir, int priority) {
+		boolean res = false;
+		num_expansions = 0;
+		
+		if(dir == 0) {
+			current = start;
+			calc_heuristic();
+			res = repeat_a_star(0, priority);
+			clear_list();
+			
+			return res;
+		}
+		
+		else {
+			Node t = end;
+			end = start;
+			start = t;
+			calc_heuristic();
+			current = start;
+			
+			res = repeat_a_star(0, priority);
+			clear_list();
+			
+			t = end;
+			end = start;
+			start = t;
+			
+			return res;
+		}
+	}
+	
+	private void check_list(Node t) {
+		if(!closed_list.contains(t)) {
+			t.set_g_val(current.get_g_val()+1);
+			update_open_list(t);
+		}
+	}
+	
+	//recursive
+	public boolean repeat_a_star(int increment, int priority) {
+		num_expansions = increment;
+		this.maze[current.row][current.col].f_val = current.f_val;
+		this.maze[current.row][current.col].h_val = current.h_val;
+		this.maze[current.row][current.col].g_val = current.g_val;
+		closed_list.push(current);
+		
+		if(end.equals(current)) {
+			is_path = true;
+			return is_path;
+		}
+		
+		if(has_left(current)) {
+			Node t = get_left(current);
+			check_list(t);
+		}
+		
+		if(has_right(current)) {
+			Node t = get_right(current);
+			check_list(t);
+		}
+		
+		if(has_up(current)) {
+			Node t = get_up(current);
+			check_list(t);
+		}
+		
+		if(has_down(current)) {
+			Node t = get_down(current);
+			check_list(t);
+		}
+		
+		if(opened_list.size() < 1) {
+			return is_path;
+		}
+		
+		//tie breaking logic goes here
+		//we have to sort opened_list...?
+		
+		current = opened_list.get(0);
+		opened_list.remove(0);
+		
+		repeat_a_star(increment+1, priority);
+		
+		if(current != null) {
+			this.maze[current.row][current.col].path = true;
+			best_path.push(current);
+			current = current.get_parent();
+		}
+		
+		return is_path;
+		
+	}
+	
 	public void adaptiveAStar(){
 		//Previously called A* and saved list of nodes that have been expanded into opened_list
 
@@ -100,7 +234,8 @@ public class Maze {
 		//We now run an A* search on this adapted list
 		//INSERT CODE HERE -- still working on this
 	}
-
+	
+	//Possible Jframe usage here to make the maze look better
 	public String output_maze() {
 		final StringBuffer b = new StringBuffer();
 		for(int i = 0; i < max_col + 2; i++) {
@@ -143,13 +278,41 @@ public class Maze {
 		return false;
 	}
 	
-	public static void main (String [] args) throws IOException {
+	public void update_open_list(Node o) {
+		if(opened_list
+				.get(opened_list.indexOf(o))
+				.get_f_val() > o.get_f_val()) {
+			opened_list.remove(opened_list.indexOf(o));
+			o.set_parent(current);
+			this.maze[o.row][o.col]
+					.set_parent
+					(this.maze[current.row][current.col]);
+			opened_list.add(o);
+		}
+		else {
+			o.set_parent(current);
+			this.maze[o.row][o.col]
+					.set_parent
+					(this.maze[current.row][current.col]);
+			opened_list.add(o);
+		}
+	}
+	
+	public void print_best_path() {
+		int count = 0;
+		while(!best_path.isEmpty()) {
+			System.out.println(best_path.pop());
+			count++;
+		}
+	}
+	
+	/*public static void main (String [] args) throws IOException {
 		Maze m = new Maze(101, 101, 0, 0, 100, 100);
 		String buffer = m.output_maze();
 		BufferedWriter file = new BufferedWriter(new FileWriter(new File("output.txt")));
 		file.write(buffer.toString());
 		file.flush();
 		file.close();
-	}
+	}*/
 	
 }
