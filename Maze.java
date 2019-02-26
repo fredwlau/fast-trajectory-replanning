@@ -14,11 +14,12 @@ public class Maze {
 	
 	Node maze [][];
 	
-	ArrayList<Node> opened_list;
+	ArrayList<Node> opened_list;	//expanded nodes
 	Stack<Node> closed_list;
 	Stack<Node> best_path;
+	Stack<Node> adapted_best_path;	//A* best_path result from adapted list
 	
-	Node current, start, end;
+	Node current, start, end, currentAdapted;
 	
 	boolean adaptive, repeat, is_path;
 	
@@ -41,6 +42,9 @@ public class Maze {
 		opened_list = new ArrayList<Node>();
 		closed_list = new Stack<Node> ();
 		best_path = new Stack<Node>();
+		adapted_best_path = new Stack<Node>();
+		opened_list = new ArrayList<Node>();
+		adapted_closed_list = new Stack<Node> ();
 		
 		start.is_blocked = false;
 		end.is_blocked = false;
@@ -121,6 +125,7 @@ public class Maze {
 			closed_list.pop();
 		}
 	}
+
 	
 	public boolean forward_backward(int dir, int priority) {
 		boolean res = false;
@@ -128,8 +133,10 @@ public class Maze {
 		
 		if(dir == 0) {
 			current = start;
+			currentAdapted = start;
 			calc_heuristic();
 			res = repeat_a_star(0, priority);
+			adaptedAStar(0); //does not do anything with result from adaptedAStar
 			clear_list();
 			
 			return res;
@@ -141,8 +148,10 @@ public class Maze {
 			start = t;
 			calc_heuristic();
 			current = start;
+			currentAdapted
 			
 			res = repeat_a_star(0, priority);
+			adaptedAStar(0); //does not do anything with result from adaptedAStar
 			clear_list();
 			
 			t = end;
@@ -157,6 +166,12 @@ public class Maze {
 		if(!closed_list.contains(t)) {
 			t.set_g_val(current.get_g_val()+1);
 			update_open_list(t);
+		}
+	}
+	private void check_adapted_list(Node t) {
+		if(!adapted_closed_list.contains(t)) {
+			t.set_g_val(currentAdapted.get_g_val()+1);
+			update_adapted_open_list(t);
 		}
 	}
 	
@@ -215,9 +230,10 @@ public class Maze {
 		
 	}
 	
-	public void adaptiveAStar(){
-		//Previously called A* and saved list of nodes that have been expanded into opened_list
+	public ArrayList<Node> adapt(){
 
+		//We have previously called A* and saved list of nodes that have been expanded into opened_list
+		//We will now adapt the heurstic values
 		ArrayList<Node> adaptedList = opened_list;
 
 		for(int i=0;i<adaptedList.size();i++){
@@ -227,12 +243,83 @@ public class Maze {
 
 			int newH = Math.abs(end.row - start.row) + Math.abs(end.col - start.row);	//distance of start state to goal
 			newH -= Math.abs(start.row-adaptedList.get(i).row) + Math.abs(start.col-adaptedList.get(i).col); //minus distance of start state to s
-			
-			expandedNodes.get(i).h_val = newH;
+			adaptedList.get(i).h_val = newH;
 		}
 
+		blockMazeForAdaptedSearch();
+
 		//We now run an A* search on this adapted list
-		//INSERT CODE HERE -- still working on this
+		return adaptedList;
+	}
+
+	public blockMazeForAdaptedSearch(){
+		//Go through maze and block the nodes not in the adapted list
+		for(int i=0;i<this.maze.length;i++){
+			for(int j=0;j<this.maze[0].length;j++){
+				if(!adaptedList.contains(maze[i][j])){	//blocks node not in adaptedList
+					maze[i][j].is_blocked = true;
+				}
+			}
+		}
+	}
+
+	public boolean adaptedAStar(int incrementAdapted){
+		//create environment for searching a* forward on an adapted list
+
+		boolean is_adaptedPath = false;
+		
+		ArrayList<Node> adaptedList = adapt(); //adapt list by adjusting heuristic values from the opened_list nodes
+		currentAdapted = adaptedList.get(0); //get starting point
+		num_expansions = incrementAdapted;
+		this.maze[currentAdapted.row][currentAdapted.col].f_val = currentAdapted.f_val;
+		this.maze[currentAdapted.row][currentAdapted.col].h_val = currentAdapted.h_val;
+		this.maze[currentAdapted.row][currentAdapted.col].g_val = currentAdapted.g_val;
+		adapted_closed_list.push(currentAdapted);
+		
+		if(end.equals(currentAdapted)) {
+			is_adaptedPath = true;
+			return is_adaptedPath;
+		}
+		
+		if(has_left(currentAdapted)) {
+			Node t = get_left(currentAdapted);
+			check_adapted_list(t);
+		}
+		
+		if(has_right(currentAdapted)) {
+			Node t = get_right(currentAdapted);
+			check_adapted_list(t);
+		}
+		
+		if(has_up(currentAdapted)) {
+			Node t = get_up(currentAdapted);
+			check_adapted_list(t);
+		}
+		
+		if(has_down(currentAdapted)) {
+			Node t = get_down(currentAdapted);
+			check_adapted_list(t);
+		}
+		
+		if(adapted_opened_list.size() < 1) {
+			return is_adaptedPath;
+		}
+		
+		//INSERT code for event of tie here
+		
+		currentAdapted = adapted_opened_list.get(0);
+		adapted_opened_list.remove(0);
+		
+		adaptedAStar(incrementAdapted+1);
+		
+		if(currentAdapted != null) {
+			this.maze[currentAdapted.row][currentAdapted.col].path = true;
+			adapted_best_path.push(currentAdapted);
+			currentAdapted = currentAdapted.get_parent();
+		}
+		
+		return is_adaptedPath;
+		
 	}
 	
 	//Possible Jframe usage here to make the maze look better
@@ -297,11 +384,30 @@ public class Maze {
 			opened_list.add(o);
 		}
 	}
+	public void update_adapted_open_list(Node o) {
+		if(adapted_open_list
+				.get(adapted_open_list.indexOf(o))
+				.get_f_val() > o.get_f_val()) {
+			adapted_open_list.remove(adapted_open_list.indexOf(o));
+			o.set_parent(currentAdapted);
+			this.maze[o.row][o.col]
+					.set_parent
+					(this.maze[currentAdapted.row][currentAdapted.col]);
+					adapted_open_list.add(o);
+		}
+		else {
+			o.set_parent(currentAdapted);
+			this.maze[o.row][o.col]
+					.set_parent
+					(this.maze[currentAdapted.row][currentAdapted.col]);
+				adapted_open_list.add(o);
+		}
+	}
 	
-	public void print_best_path() {
+	public void print_path(Stack<Node> path) {
 		int count = 0;
-		while(!best_path.isEmpty()) {
-			System.out.println(best_path.pop());
+		while(!path.isEmpty()) {
+			System.out.println(path.pop());
 			count++;
 		}
 	}
