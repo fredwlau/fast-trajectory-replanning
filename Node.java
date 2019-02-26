@@ -1,3 +1,5 @@
+import java.util.Comparator;
+
 public class Node implements Comparable<Node>{
 	public Node parent;
 	public int g_val, h_val, f_val, row, col;
@@ -30,6 +32,11 @@ public class Node implements Comparable<Node>{
 		return (max_row - this.row) + (max_col-this.col);
 	}
 	
+	public void set_g_val(int new_g) {
+		this.g_val = new_g;
+		this.f_val = this.g_val + this.h_val;
+	}
+	
 	public int get_g_val() {
 		return this.g_val;
 	}
@@ -49,6 +56,26 @@ public class Node implements Comparable<Node>{
 	public boolean visited_state() {
 		return this.visited;
 	}
+	
+	static final Comparator<Node> small = new Comparator<Node>() {
+		@Override
+		public int compare(Node one, Node two) {
+			if(one.f_val == two.f_val) {
+				return one.g_val - two.g_val;
+			}
+			return one.f_val - two.f_val;
+		}
+	};
+	
+	static final Comparator<Node> big = new Comparator<Node>(){
+		@Override
+		public int compare(Node one, Node two) {
+			if(one.f_val == two.f_val) {
+				return two.g_val - one.g_val;
+			}
+			return one.f_val - two.f_val;
+		}		
+	};
 	
 	public int compareTo(Node o) {
 		if(this.f_val == o.f_val) {
