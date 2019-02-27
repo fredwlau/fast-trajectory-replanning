@@ -78,7 +78,7 @@ public class AdaptiveAStar extends Maze {
 			newSearch.clear_path();
 			newSearch.adaptive(40, 35);	
 		}
-		
+		newSearch.print_path(newSearch.best_path);
 		String buffer = newSearch.output_maze();
 		BufferedWriter file = new BufferedWriter(new FileWriter(new File("adaptive.txt")));
 		file.write(buffer.toString());

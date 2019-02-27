@@ -36,7 +36,6 @@ public class Maze {
 		opened_list = new ArrayList<Node>();
 		closed_list = new Stack<Node> ();
 		best_path = new Stack<Node>();
-		opened_list = new ArrayList<Node>();
 		
 		start.is_blocked = false;
 		end.is_blocked = false;
@@ -244,11 +243,14 @@ public class Maze {
 	
 	//may not need this
 	//will determine later
-	/*public void print_path(Stack<Node> path) {
+	public void print_path(Stack<Node> path) {
 		int count = 0;
+		if(path.isEmpty()){
+			System.out.println("Stack is empty");
+		}
 		while(!path.isEmpty()) {
 			System.out.println(path.pop());
 			count++;
 		}
-	}*/
+	}
 }
