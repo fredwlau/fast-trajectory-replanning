@@ -5,7 +5,7 @@ public class Maze {
 	
 	public static final char unblocked_char = ' ';
 	public static final char block_char = '▓';
-	public static final char path_char ='█';
+	public static final char path_char ='X';
 	
 	Node maze [][];
 	
@@ -31,6 +31,10 @@ public class Maze {
 		start = this.maze[start_row][start_col];
 		end = this.maze[goal_row][goal_col];
 		
+		/*if(start.is_blocked == true || end.is_blocked == true) {
+			System.out.println("The starting or ending points are blocked");
+		}*/
+		
 		calc_heuristic();
 		
 		opened_list = new ArrayList<Node>();
@@ -53,6 +57,9 @@ public class Maze {
 	}
 	
 	public boolean has_right(Node o) {
+		if(o.col == 100) {
+			return false;
+		}
 		if(o.col < max_row && !this.maze[o.row][o.col+1].is_blocked) {
 			return true;
 		}
@@ -67,7 +74,10 @@ public class Maze {
 	}
 	
 	public boolean has_down(Node o) {
-		if(o.row > max_col && !this.maze[o.row+1][o.col].is_blocked) {
+		if(o.row == 100) {
+			return false;
+		}
+		if(o.row < max_col && !this.maze[o.row+1][o.col].is_blocked) {
 			return true;
 		}
 		return false;
@@ -199,7 +209,7 @@ public class Maze {
 	
 	//Possible Jframe usage here to make the maze look better
 	//Need to find a way to print path nodes in different color
-	public String output_maze() {
+	/*public String output_maze() {
 		final StringBuffer b = new StringBuffer();
 		for(int i = 0; i < max_col + 2; i++) {
 			b.append(block_char);
@@ -225,6 +235,27 @@ public class Maze {
 			b.append(block_char);
 		}
 		b.append('\n');
+		return b.toString();
+	}*/
+	
+	public String output2() {
+		final StringBuffer b = new StringBuffer();
+		for(int i = 0; i < max_row; i++) {
+			for(int j = 0; j < max_col; j++) {
+				if(this.maze[i][j].is_blocked) {
+					b.append(block_char);
+				}
+				else if(this.maze[i][j].path) {
+					b.append(path_char);
+				}
+				else {
+					b.append(unblocked_char);
+				}
+				if(j == 100) {
+					b.append('\n');
+				}
+			}
+		}
 		return b.toString();
 	}
 	
