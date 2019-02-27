@@ -119,7 +119,10 @@ public class Maze {
 	}
 	
 	public void update_open_list(Node o) {
-		if(opened_list
+		if(
+			opened_list.contains(o) 
+			&&
+			opened_list
 				.get(opened_list.indexOf(o))
 				.get_f_val() > o.get_f_val()) {
 			opened_list.remove(opened_list.indexOf(o));
