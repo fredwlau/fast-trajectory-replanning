@@ -1,3 +1,4 @@
+
 import java.util.Collections;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -71,28 +72,30 @@ public class RepeatedAStar extends Maze {
 		return is_path;	
 	}
 	
-	//potential static issue here
-	public void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		boolean path;
 		int num = 0;
 		
-		while(num < 50) {
+		RepeatedAStar new_search = new RepeatedAStar(101, 101, 0, 0, 100, 100);
+		
+	
 			
-			RepeatedAStar new_search = new RepeatedAStar(101, 101, 0, 0, 100, 100);
 			path = new_search.forward_backward(0, 0);
 			//forward
-			if(path) {
-				num++;
-				new_search.clear_path();
-				new_search.forward_backward(1, 2);
-			}
-			
 			new_search.print_path(new_search.best_path);
-			String buffer = new_search.output_maze();
-			BufferedWriter file = new BufferedWriter(new FileWriter(new File("repeated.txt")));
-			file.write(buffer.toString());
-			file.flush();
-			file.close();
+			if(path) {
+				String buffer = new_search.output2();
+				BufferedWriter file = new BufferedWriter(new FileWriter(new File("repeated.txt")));
+				file.write(buffer.toString());
+				file.flush();
+				file.close();
+				new_search.clear_path();
+				//backward
+				new_search.forward_backward(1, 2);
+				new_search.print_path(new_search.best_path);
+			
+			
+			num++;
 		}
 	}
 }
