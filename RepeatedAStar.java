@@ -75,17 +75,20 @@ public class RepeatedAStar extends Maze {
 	public void main(String[] args) throws IOException {
 		boolean path;
 		int num = 0;
-		Maze m;
+		
 		while(num < 50) {
-			m = new Maze(101, 101, 0, 0, 100, 100);
+			
+			RepeatedAStar new_search = new RepeatedAStar(101, 101, 0, 0, 100, 100);
+			path = new_search.forward_backward(0, 0);
 			//forward
-			path = forward_backward(0, 2);
 			if(path) {
 				num++;
-				m.clear_path();
-				forward_backward(1, 2);
+				new_search.clear_path();
+				new_search.forward_backward(1, 2);
 			}
-			String buffer = m.output_maze();
+			
+			new_search.print_path(new_search.best_path);
+			String buffer = new_search.output_maze();
 			BufferedWriter file = new BufferedWriter(new FileWriter(new File("repeated.txt")));
 			file.write(buffer.toString());
 			file.flush();
