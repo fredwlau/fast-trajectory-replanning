@@ -3,8 +3,9 @@ import java.util.Stack;
 
 public class Maze {
 	
-	public static final char path_char = ' ';
+	public static final char unblocked_char = ' ';
 	public static final char block_char = '▓';
+	public static final char path_char ='█';
 	
 	Node maze [][];
 	
@@ -205,11 +206,14 @@ public class Maze {
 		for(int i = 0; i < max_row; i++) {
 			b.append(block_char);
 			for (int j = 0; j < max_col; j++) {
-				if(this.maze[i][j].is_blocked) {
+				if(this.maze[i][j].path) {
+					b.append(path_char);
+				}
+				else if(this.maze[i][j].is_blocked) {
 					b.append(block_char);
 				}
 				else {
-					b.append(path_char);
+					b.append(unblocked_char);
 				}
 			}
 			b.append(block_char);
