@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.Stack;
+import java.io.Serializable;
 
-public class Maze {
+public class Maze implements Serializable {
 	
 	public static final char unblocked_char = ' ';
 	public static final char block_char = '▓';
@@ -30,10 +31,6 @@ public class Maze {
 		
 		start = this.maze[start_row][start_col];
 		end = this.maze[goal_row][goal_col];
-		
-		/*if(start.is_blocked == true || end.is_blocked == true) {
-			System.out.println("The starting or ending points are blocked");
-		}*/
 		
 		calc_heuristic();
 		
@@ -197,6 +194,7 @@ public class Maze {
 		}
 	}
 	
+	
 	public void clear_path() {
 		for(int i = 0; i < max_row; i++) {
 			for(int j = 0; j < max_col; j++) {
@@ -207,38 +205,7 @@ public class Maze {
 		num_expansions = 0;
 	}
 	
-	//Possible Jframe usage here to make the maze look better
-	//Need to find a way to print path nodes in different color
-	/*public String output_maze() {
-		final StringBuffer b = new StringBuffer();
-		for(int i = 0; i < max_col + 2; i++) {
-			b.append(block_char);
-		}
-		b.append('\n');
-		for(int i = 0; i < max_row; i++) {
-			b.append(block_char);
-			for (int j = 0; j < max_col; j++) {
-				if(this.maze[i][j].path) {
-					b.append(path_char);
-				}
-				else if(this.maze[i][j].is_blocked) {
-					b.append(block_char);
-				}
-				else {
-					b.append(unblocked_char);
-				}
-			}
-			b.append(block_char);
-			b.append("\n");
-		}
-		for(int i = 0; i < max_col + 2; i++) {
-			b.append(block_char);
-		}
-		b.append('\n');
-		return b.toString();
-	}*/
-	
-	public String output2() {
+	public String output_maze() {
 		final StringBuffer b = new StringBuffer();
 		for(int i = 0; i < max_row; i++) {
 			for(int j = 0; j < max_col; j++) {
