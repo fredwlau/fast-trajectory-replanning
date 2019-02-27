@@ -1,10 +1,11 @@
 import java.util.Comparator;
+import java.io.Serializable;
 
-public class Node implements Comparable<Node>{
+public class Node implements Serializable, Comparable<Node>{
 	public Node parent;
 	public int g_val, h_val, f_val, row, col;
 	public boolean is_blocked, path, visited;
-
+	
 	
 	public Node(int row, int col, int h_val, boolean is_blocked) {
 		this.parent = null;
