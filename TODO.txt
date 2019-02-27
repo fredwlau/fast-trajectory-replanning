@@ -11,7 +11,7 @@ Code Issues:
 Issues:
 - Stack for best_path is empty in certain cases when the program is run
 - In other cases, the stack contains only a few nodes. 
-o These path nodes are printed in the resulting maze at the end of the program, and show that the attempt to make a path has begun but was ended after expanding some nodes and pushing a few to the best_path stack
+**BOTH EDGE CASES RESULT OF A MAZE IN WHICH THERE IS NO POSSIBLE PATH FROM START TO FINISH**
 
 Questions (1-6): 
 
