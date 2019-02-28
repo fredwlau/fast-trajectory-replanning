@@ -133,49 +133,49 @@ public class Search extends Maze implements Serializable {
 	
 	//main method for creating and storing the mazes
 	
-	/*public static void main(String[] args) throws IOException {
-		boolean path;
+	// public static void main(String[] args) throws IOException {
+	// 	boolean path;
 		
-		RepeatedAStar new_search = new RepeatedAStar(101, 101, 0, 0, 100, 100);
+	// 	Search new_search = new Search(101, 101, 0, 0, 100, 100);
 
-			path = new_search.forward_backward(0, 0);
-			//forward
-			new_search.print_path(new_search.best_path);
-			if(path) {
-				//successful maze with path from 0,0 to 100,100
-				//save the maze
-				try {
-					FileOutputStream file_out = new FileOutputStream("./maze0.ser");
-					ObjectOutputStream object_out = new ObjectOutputStream(file_out);
-					object_out.writeObject(new_search);
-					object_out.close();
-				}
-				catch(Exception ex) {
-					ex.printStackTrace();
-				}
-				String buffer = new_search.output_maze();
-				BufferedWriter file = new BufferedWriter(new FileWriter(new File("repeated.txt")));
-				file.write(buffer.toString());
-				file.flush();
-				file.close();
+	// 		path = new_search.forward_backward(0, 0);
+	// 		//forward
+	// 		new_search.print_path(new_search.best_path);
+	// 		if(path) {
+	// 			//successful maze with path from 0,0 to 100,100
+	// 			//save the maze
+	// 			try {
+	// 				FileOutputStream file_out = new FileOutputStream("./maze0.ser");
+	// 				ObjectOutputStream object_out = new ObjectOutputStream(file_out);
+	// 				object_out.writeObject(new_search);
+	// 				object_out.close();
+	// 			}
+	// 			catch(Exception ex) {
+	// 				ex.printStackTrace();
+	// 			}
+	// 			String buffer = new_search.output_maze();
+	// 			BufferedWriter file = new BufferedWriter(new FileWriter(new File("repeated.txt")));
+	// 			file.write(buffer.toString());
+	// 			file.flush();
+	// 			file.close();
 				
-				new_search.clear_path();
-				new_search.forward_backward(1, 2);
-				new_search.print_path(new_search.best_path);
+	// 			new_search.clear_path();
+	// 			new_search.forward_backward(1, 2);
+	// 			new_search.print_path(new_search.best_path);
 				
-				try {
-					FileInputStream file_in = new FileInputStream("maze0.ser");
-					ObjectInputStream object_in = new ObjectInputStream(file_in);
-					RepeatedAStar m = (RepeatedAStar) object_in.readObject();
-					System.out.print(m.output_maze());
-					object_in.close();
-				}
-				catch(Exception ex) {
-					ex.printStackTrace();
-				}
+	// 			try {
+	// 				FileInputStream file_in = new FileInputStream("maze0.ser");
+	// 				ObjectInputStream object_in = new ObjectInputStream(file_in);
+	// 				Search m = (Search) object_in.readObject();
+	// 				System.out.print(m.output_maze());
+	// 				object_in.close();
+	// 			}
+	// 			catch(Exception ex) {
+	// 				ex.printStackTrace();
+	// 			}
 			
-		}
-	}*/
+	// 	}
+	// }
 	
 	//main method for running pathfinding on the mazes
 	
@@ -184,7 +184,7 @@ public class Search extends Maze implements Serializable {
 		try {
 			FileInputStream file_in = new FileInputStream("maze0.ser");
 			ObjectInputStream object_in = new ObjectInputStream(file_in);
-			RepeatedAStar m = (RepeatedAStar) object_in.readObject();
+			Search m = (Search) object_in.readObject();
 			m.clear_path();
 			boolean path = m.forward_backward(0, 0);
 			if(path) {
