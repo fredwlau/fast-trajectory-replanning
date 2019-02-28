@@ -9,9 +9,9 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class RepeatedAStar extends Maze implements Serializable {
+public class Search extends Maze implements Serializable {
 	
-	public RepeatedAStar(int row, int col, int start_row, int start_col, int goal_row, int goal_col) {
+	public Search(int row, int col, int start_row, int start_col, int goal_row, int goal_col) {
 		super(row, col, start_row, start_col, goal_row, goal_col);
 		// TODO Auto-generated constructor stub
 	}
@@ -75,6 +75,61 @@ public class RepeatedAStar extends Maze implements Serializable {
 		
 		return is_path;	
 	}
+
+	public boolean adaptive(int start_row, int start_col) {
+		boolean res = false;
+		num_expansions = 0;
+		
+		current = maze[start_row][start_col];
+		if(!adaptive) {
+			calc_heuristic();
+			adaptive = true;
+		}
+		else {
+			repeat = true;
+		}
+		
+		res = adaptive_a_star(0);
+		opened_list.clear();
+		
+		if(res) {
+			Node t;
+			while(!closed_list.isEmpty()) {
+				t = closed_list.pop();
+				//int new_h = this.maze[t.row][t.col].h_val;
+				this.maze[t.row][t.col].h_val
+					= this.end.get_g_val()
+					-t.get_g_val();
+			}
+		}
+		return res;	
+	}
+	
+	public boolean adaptive_a_star(int increment) {
+		set_values(increment);
+		
+		if(isPath()) {
+			return true;
+		}
+		
+		manipulate_maze(current);
+		
+		if(opened_list.size() < 1) {
+			return is_path;
+		}
+		
+		Collections.sort(opened_list, Node.big);
+		
+		current = opened_list.get(0);
+		opened_list.remove(0);
+		
+		adaptive_a_star(increment+1);
+		
+		set_path();
+		
+		return is_path;
+		
+	}
 	
 	//main method for creating and storing the mazes
 	
@@ -90,7 +145,7 @@ public class RepeatedAStar extends Maze implements Serializable {
 				//successful maze with path from 0,0 to 100,100
 				//save the maze
 				try {
-					FileOutputStream file_out = new FileOutputStream("./maze50.ser");
+					FileOutputStream file_out = new FileOutputStream("./maze0.ser");
 					ObjectOutputStream object_out = new ObjectOutputStream(file_out);
 					object_out.writeObject(new_search);
 					object_out.close();
@@ -109,7 +164,7 @@ public class RepeatedAStar extends Maze implements Serializable {
 				new_search.print_path(new_search.best_path);
 				
 				try {
-					FileInputStream file_in = new FileInputStream("maze50.ser");
+					FileInputStream file_in = new FileInputStream("maze0.ser");
 					ObjectInputStream object_in = new ObjectInputStream(file_in);
 					RepeatedAStar m = (RepeatedAStar) object_in.readObject();
 					System.out.print(m.output_maze());
@@ -127,14 +182,14 @@ public class RepeatedAStar extends Maze implements Serializable {
 	public static void main(String [] args) {
 		
 		try {
-			FileInputStream file_in = new FileInputStream("maze1.ser");
+			FileInputStream file_in = new FileInputStream("maze0.ser");
 			ObjectInputStream object_in = new ObjectInputStream(file_in);
 			RepeatedAStar m = (RepeatedAStar) object_in.readObject();
 			m.clear_path();
 			boolean path = m.forward_backward(0, 0);
 			if(path) {
 				String buffer = m.output_maze();
-				BufferedWriter file = new BufferedWriter(new FileWriter(new File("maze1-forward-path.txt")));
+				BufferedWriter file = new BufferedWriter(new FileWriter(new File("maze0-forward-path.txt")));
 				file.write(buffer.toString());
 				file.flush();
 				file.close();
@@ -144,10 +199,14 @@ public class RepeatedAStar extends Maze implements Serializable {
 				m.forward_backward(1, 2);
 				
 				buffer = m.output_maze();
-				file = new BufferedWriter(new FileWriter(new File("maze1-backward-path.txt")));
+				file = new BufferedWriter(new FileWriter(new File("maze0-backward-path.txt")));
 				file.write(buffer.toString());
 				file.flush();
 				file.close();
+
+				m.adaptive(0,0);
+				m.output_maze();
+				System.out.println("Printed");
 			}
 			object_in.close();
 		}
